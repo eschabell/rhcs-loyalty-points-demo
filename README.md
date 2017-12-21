@@ -74,3 +74,4 @@ See the tagged releases for the following versions of the product:
 
 ![OCP MONITORING](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/ocp-monitoring.png)
 
+![Cloud Suite](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/rhcs-arch.png)
