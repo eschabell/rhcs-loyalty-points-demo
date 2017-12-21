@@ -63,7 +63,14 @@ Released versions
 -----------------
 See the tagged releases for the following versions of the product:
 
-- v1.4 - Node.js 6 app, blockchain setup using Ethereum project, and customer loyalty points demo on any OpenShift installation.
+- v1.0 - Node.js 6 app, blockchain setup using Ethereum project, and customer loyalty points demo on any OpenShift installation.
 
 
-![Cloud Suite](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/rhcs-arch.png)
+![OCP DEMO](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/ocp-demo.png)
+
+![OCP APP](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/ocp-app.png)
+
+![OCP OVERVIEW](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/ocp-overview.png)
+
+![OCP MONITORING](https://github.com/eschabell/rhcs-loyalty-points-demo/blob/master/docs/demo-images/ocp-monitoring.png)
+

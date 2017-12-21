@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="images/redhat.png">
+
+    <title>Destinasia Dollars</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/extra/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="stylesheets/style.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/extra/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/extra/html5shiv.min.js"></script>
+      <script src="js/extra/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+<div class="all">
+    
+
+    <div class="container">
+      <div id="banner-ok" class="alert alert-success alert-dismissable fade in" style="display:none;">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Connected!</strong>
+      </div>
+      <div id="banner-warning" class="alert alert-warning alert-dismissable fade in" role="alert" style="display:none;">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Warning!</strong> Looking up smart contracts..... 
+      </div>
+      <div class="starter-template">
+  
+
+        <h3>&nbsp;</h3>
+
+        <div class="row connections"  >
+          <div class="col-md-3"><h1>Destinasia Dollars</h1>
+</div>
+           
+            <input type="text" class="form-control" value="http://pvt-destinasia.cloudapps.destinasia.io" id="privateChainEndpoint" placeholder="e.g. http://pvt-destinasia.cloudapps.destinasia.io">
+          
+              <input class="btn btn-primary" type="button" id="btn_connect" value="Connect">
+          
+           <div class="row check-points">
+        
+ <div class="col-md-3"><label for="accountAddr">Click on a partner </label></div>
+          <div class="form-group col-md-5">
+           
+            <input type="text" class="form-control blockid" value="0xa7129ba8dffd19869ec6d408e9866d43935c5099" id="accountAddr" placeholder="e.g. 0xa7129ba8dffd19869ec6d408e9866d43935c5099">
+          </div>
+          <div class="col-md-1">
+              <input class="btn btn-default" type="button" id="btn_getPoints" value="Check Points">
+          </div>
+         
+        </div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-3"></div>
+          <div class="form-group col-md-5">
+            <input type="text" class="form-control" value="" id="contractAddr" placeholder="Searching for valid smart contracts....Please wait....">
+          </div>
+<!-- 
+          <div class="col-md-1">
+              <input class="btn btn-default" type="button" id="btn_update_addr" value="Update">
+          </div>
+-->         
+       
+         <row>
+<br><br>
+
+        <h3>Reward Partners </h3>
+        <table class="table act table-bordered" id="tbl1">
+          
+          <tbody></tbody>
+        </table>
+        <p class="lead"><div id="points"></div></p>
+
+<div class="transfer-pane" >
+        <label><b>transfer points!</b> drag partners into the sender and receiver boxes</label>
+        <div class="row">
+          <div class="col-md-4">
+            <input type="text" class="form-control"  ondrop="myApp.drop(event)" ondragover="myApp.allowDrop(event)" value="" id="senderAddr" placeholder="sender">
+          </div>
+          <div class="col-md-4">
+            <input type="text" class="form-control" ondrop="myApp.drop(event)" ondragover="myApp.allowDrop(event)" value="" id="recvAddr" placeholder="receiver">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" value="" id="sendValue" placeholder="1000000">
+          </div>
+          <div class="col-md-2">
+            <input class="btn btn-default" type="button" id="btn_send" value="Send">
+          </div>
+        </div> <!--row-->
+        </div>
+<!-- <section class="payment-methods">
+
+<img src="images/visa.svg" />
+<img src="images/paypal.svg" />
+<img src="images/bitcoin.svg" />
+<img src="images/mastercard.svg" />
+<img src="images/amex.svg" />
+<img src="images/dinersclub.svg" />
+</section> -->
+
+      </div> <!-- starter template-->
+
+    </div><!-- /.container -->
+</div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/web3.min.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/app1.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+
+    <script>window.jQuery || document.write('<script src="js/jquery-3.2.1.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/extra/ie10-viewport-bug-workaround.js"></script>
+    <script>
+	$( document ).ready(function() {
+		Log.log('horray');
+	$('#btn_getPoints').prop('disabled',true);
+    myApp.init();
+    //var acct='0xa7129ba8dffd19869ec6d408e9866d43935c5099';
+    $('#btn_getPoints').on('click', function(event) {
+      console.log("clicked");
+      myApp.showPointBalance($('#accountAddr').val());
+    });
+    $('#btn_send').on('click', function(event) {
+      console.log("clicked");
+      myApp.send($('#senderAddr').val(),$('#recvAddr').val(),$('#sendValue').val());
+    });
+    $('#btn_update_addr').on('click', function(event) {
+      console.log("clicked update addr ");
+      myApp.config.etheContractAddr=$('#contractAddr').val();
+      console.log("newly updated  etheContractAddr :"+myApp.config.etheContractAddr);
+    });
+    $('#btn_connect').on('click', function(event) {
+      console.log("clicked - connect"+myApp.envConfigs.length);
+      startupInit();
+
+      })//;
+    });//document
+    function startupInit() {
+      console.log("clicked - connect"+myApp.envConfigs.length);
+      //load config
+
+      for (i=0; i< myApp.envConfigs.length;i++) {
+        if (myApp.envConfigs[i].etheURL==$('#privateChainEndpoint').val()) {
+          myApp.config=myApp.envConfigs[i];
+        }
+      } // for
+
+      //no config found, create a new config
+      if (myApp.config == null ) {
+        //last is a dummy config
+        myApp.config=myApp.envConfigs[myApp.envConfigs.length-1];
+        myApp.config.etheURL=$('#privateChainEndpoint').val();
+        console.log("new config: Updated endpoint "+myApp.config.etheURL);
+      }
+      if (myApp.config.etheContractAddr!=null) {
+        $('#contractAddr').val(myApp.config.etheContractAddr);
+      }
+      $('#banner-ok').show().fadeOut(2000);
+      if (myApp.config.etheContractAddr==null) {
+        $('#banner-warning').show().fadeOut(2000);
+      }
+//      $('#btn_update_addr').prop('disabled',false);
+      $('#tbl1 tbody').empty();
+      for (i=0; i < myApp.config.etheAccounts.length;i++) {
+        console.log(myApp.config.etheAccounts[i]);
+
+          var r='<tr><td>'+(i+1)+'</td><td class="acct_row" draggable="true" ondragstart="myApp.drag(event)" id="acct_'+myApp.config.etheAccounts[i]+'">'+myApp.config.etheAccounts[i]+'</td><td id="bal_'+myApp.config.etheAccounts[i]+'"> - </td></tr>';
+
+          $('#tbl1 tbody').append(r);
+      }
+      $( '.acct_row' ).on('click', function(event) {
+        //console.log(" row clicked "+Object.keys(event));
+        console.log(" row clicked "+$('#'+event.target.id).html());
+        $('#accountAddr').val($('#'+event.target.id).html());
+        $('#accountAddr').fadeOut(100).fadeIn(300);
+      });
+      var acct=$('#accountAddr').val();
+      console.log('account:'+acct);
+      //myApp.showPointBalance(acct);
+
+        //check if contract available and valid
+        myApp.setupContract(myApp.config.etheURL);
+
+    }
+    </script>
+  </body>
+</html>

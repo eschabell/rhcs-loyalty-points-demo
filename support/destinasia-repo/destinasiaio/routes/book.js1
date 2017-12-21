@@ -1,0 +1,17 @@
+var express = require('express');
+var router = express.Router();
+ var request = require('request');
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+
+var url='http://fusetravelagency-wohshon-destinasia.apps.dev.openshift.opentlc.com/rest/book';
+var data='{   traveller: "Joe",     flightReq :     { flightFrom: "GRU",      flightTo: "SCL",      flightDate: "2017-02-28",      flightPassengers: 5,      flightNo: "TA12" },   hotelReq:     { hotelArrivalDate: "2017-02-28",      hotelNights: 14,      hotelCity: "SCL",      hotelId: "Sheraton Santiago" },   carReq:     { carCity: "SCL",      carRentalCo: "Hertz",      carType: "Econ",      carStartDate: "2017-02-28",      carDays: 50 }  }';
+
+
+
+
+res.sendfile("views/index.html");
+});
+
+module.exports = router;

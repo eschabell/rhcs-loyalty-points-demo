@@ -7,8 +7,11 @@ PROJECT="git@github.com:redhatdemocentral/rhcs-loyalty-points-demo.git"
 OPENSHIFT_USER=openshift-dev
 OPENSHIFT_PWD=devel
 HOST_IP=yourhost.com
+OCP_DESCRIPTION="Blockchain Customer Loyalty Points"
 OCP_PRJ=ethe-demo
-OCP_APP=bootnode
+OCP_BOOT=bootnode
+OCP_PVT=pvt
+OCP_APP=dapp
 
 # prints the documentation for this script.
 function print_docs() 
@@ -111,7 +114,7 @@ fi
 echo
 echo "Setting up cluster admin rights..."
 echo
-oc adm policy add-scc-to-user anyuid -z default -n eth-demo
+oc adm policy add-scc-to-user anyuid -z default -n "$OCP_PRJ"
 
 if [ "$?" -ne "0" ]; then
 	echo
@@ -122,7 +125,7 @@ fi
 echo
 echo "Logging in to OpenShift as $OPENSHIFT_USER..."
 echo
-oc login $HOST_IP:8443 --password=$OPENSHIFT_PWD --username=$OPENSHIFT_USER
+oc login "$HOST_IP":8443 --password="$OPENSHIFT_PWD" --username="$OPENSHIFT_USER"
 
 if [ "$?" -ne "0" ]; then
 	echo
@@ -133,14 +136,15 @@ fi
 echo
 echo "Creating a new project..."
 echo
-oc new-project $OCP_PRJ
+oc new-project "$OCP_PRJ" --display-name="$OCP_DESCRIPTION" --description="Blockchain crypto ledger example based on Ethereum
+project for travel customer loyalty points program demo."
 
 echo
 echo "Setting up a new app..."
 echo
 oc delete bc "$OCP_APP" -n "$OCP_PRJ" >/dev/null 2>&1
 oc delete imagestreams "$OCP_APP" >/dev/null 2>&1
-oc new-app wohshon/go-ethereum:bootnode --name=bootnode
+oc new-app wohshon/go-ethereum:"$OCP_BOOT" --name="$OCP_BOOT"
 
 if [ "$?" -ne "0" ]; then
 	echo
@@ -149,12 +153,12 @@ if [ "$?" -ne "0" ]; then
 fi
 
 # need to wait a bit for new app to deploy.
-sleep 30   
+sleep 20 
 
 echo
 echo "Deploying private chain..."
 echo 
-oc new-app wohshon/go-ethereum:private --name=pvt -e BOOTNODE=$(oc get svc bootnode |  sed '1d' | awk '{print $2}' )
+oc new-app wohshon/go-ethereum:private --name="$OCP_PVT" -e "$OCP_BOOT"=$(oc get svc "$OCP_BOOT" |  sed '1d' | awk '{print $2}' )
 
 if [ "$?" -ne "0" ]; then
 	echo
@@ -165,19 +169,45 @@ fi
 echo
 echo "Creating an externally facing route by exposing a service..."
 echo
-oc expose service pvt
+oc expose service "$OCP_PVT"
 
 if [ "$?" -ne "0" ]; then
 	echo
-	echo Error occurred during 'oc expose service' command!
+	echo "Error occurred during 'oc expose service' command!"
+	exit
+fi
+
+echo
+echo "Deploying an S2I node.js customer loyalty application..."
+echo
+oc new-app --name=$OCP_APP https://gitlab.com/destinasia/destinasia-repo.git --context-dir=$OCP_APP 
+
+if [ "$?" -ne "0" ]; then
+	echo
+	echo "Error occurred during S2I node.js 'oc new-app' command!"
+	exit
+fi
+
+echo
+echo "Creating an externally facing route by exposing a service..."
+echo
+oc expose service $OCP_APP
+
+if [ "$?" -ne "0" ]; then
+	echo
+	echo "Error occurred during 'oc expose service' command!"
 	exit
 fi
 
 echo
 echo "========================================================================================="
 echo "=                                                                                       ="
-echo "=  This completes the Customer Loyalty Points demo installation, service endpoint       ="
-echo "=  of the blockchain that the client application uses can be found here:                ="
+echo "=  This completes the Customer Loyalty Points demo installation, the customer loyalty   ="
+echo "=  points app can be found here:                                                        ="
+echo "=                                                                                       ="
+echo "=      http://$OCP_APP-$OCP_PRJ.$HOST_IP.nip.io                                    ="
+echo "=                                                                                       ="
+echo "=  The blockchain end point that the node.js application uses is here:                  ="
 echo "=                                                                                       ="
 echo "=      http://pvt-$OCP_PRJ.$HOST_IP.nip.io                                       ="
 echo "=                                                                                       ="

@@ -1,0 +1,18 @@
+{"BookingResponse":{
+	"FlightResp":{
+		"flightResCode": "ABC12",
+		"flightPrice": 123,
+		"filghtResStatus": "OK"
+	},
+	"HotelResp":{
+		"hotelResCode": 123,
+		"hotelPrice": 123,
+		"hotelResStatus": "OK"
+	},
+	"CarResp":{
+		"carResCode": 123,
+		"carPrice": 300,
+		"carResStatus": "OK"
+	}
+}
+}

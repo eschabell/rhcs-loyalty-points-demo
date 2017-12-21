@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean id="aggStrat" class="com.redhat.travelagency.AggregationStrat" />
+    <bean id="brmsReqProc" class="com.redhat.travelagency.BRMSReqProcessor" />
+    <bean id="brmsRespProc" class="com.redhat.travelagency.BRMSRespProcessor" />
+    <camelContext trace="false" id="context-a07d96fd-3af7-4782-a701-b5f3c1d4e1cd" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder location="props.properties" id="urls" />
+    <threadPool id="throttlerThreadPool"
+                poolSize="50"
+                maxPoolSize="100"
+                threadName="ThrottlerThreadPool"
+                maxQueueSize="-1"/>
+    <threadPool id="customThreadPool"
+                poolSize="50"
+                maxPoolSize="100"
+                threadName="CustomThreadPool"
+                maxQueueSize="-1"/>        
+        <restConfiguration component="netty4-http" host="0.0.0.0" port="8182" enableCORS="true" />
+        <rest path="/rest" consumes="application/json">
+            <post uri="/book">
+                <to uri="direct:book" />
+            </post>
+        </rest>
+      <route id="tap">
+        <from uri="direct:tap"/>
+        <!-- throttle 8 message per sec as there are 10 pods = > 80 msec-->
+            <threads executorServiceRef="throttlerThreadPool">
+                <throttle timePeriodMillis="1000" asyncDelayed="true">
+                    <constant>8</constant>
+                          <setHeader headerName="Exchange.HTTP_METHOD" id="_setHeadertest">
+                            <constant>POST</constant>
+                          </setHeader> 
+                          <setBody>
+                            <simple>{ "event": "fuse" }</simple>
+                        </setBody>            
+                        <to id="test" uri="http4://{{DASHBOARDURL}}/events/fuse?exchangePattern=InOut&amp;bridgeEndpoint=true"/>
+            </throttle>
+        </threads>                        
+      </route>           
+        <route id="bookings">
+            <from uri="direct:book" />
+            <wireTap uri="direct:tap" executorServiceRef="customThreadPool"/>             
+            <unmarshal>
+                <json prettyPrint="true" library="Gson" unmarshalTypeName="com.redhat.travelagency.model.BookingReq" />
+            </unmarshal>
+            <split parallelProcessing="true" strategyRef="aggStrat">
+                <method ref="null" method="splitBody" beanType="com.redhat.travelagency.BookingReqSplitter"></method>
+                <choice id="_choice1">
+                    <when>
+                        <simple>${body} is 'com.redhat.FlightReq'</simple>
+                        <to uri="direct:flightRoute" />
+                    </when>
+                    <when>
+                        <simple>${body} is 'com.redhat.HotelReq'</simple>
+                        <to uri="direct:hotelRoute" />
+                    </when>
+                    <when>
+                        <simple>${body} is 'com.redhat.CarReq'</simple>
+                        <to uri="direct:carRoute" />
+                    </when>
+                </choice>
+            </split>
+            <to uri="direct:brmsRoute" />
+        </route>
+        <route id="flightRoute">
+            <from uri="direct:flightRoute" />
+            <setHeader headerName="Exchange.HTTP_METHOD">
+                <constant>POST</constant>
+            </setHeader>
+            <marshal>
+                <json library="Gson" />
+            </marshal>
+            <to uri="http4://{{FlightURL}}?exchangePattern=InOut&amp;bridgeEndpoint=true" />
+            <unmarshal>
+                <json prettyPrint="true" library="Gson" unmarshalTypeName="com.redhat.FlightResp" />
+            </unmarshal>
+        </route>
+        <route id="hotelRoute">
+            <from uri="direct:hotelRoute" />
+            <setHeader headerName="Exchange.HTTP_METHOD">
+                <constant>POST</constant>
+            </setHeader>
+            <marshal>
+                <json library="Gson" />
+            </marshal>
+            <to uri="http4://{{HotelURL}}?exchangePattern=InOut&amp;bridgeEndpoint=true" />
+            <unmarshal>
+                <json prettyPrint="true" library="Gson" unmarshalTypeName="com.redhat.HotelResp" />
+            </unmarshal>
+        </route>
+        <route id="carRoute">
+            <from uri="direct:carRoute" />
+            <setHeader headerName="Exchange.HTTP_METHOD">
+                <constant>POST</constant>
+            </setHeader>
+            <marshal>
+                <json library="Gson" />
+            </marshal>
+            <to uri="http4://{{CarURL}}?exchangePattern=InOut&amp;bridgeEndpoint=true" />
+            <unmarshal>
+                <json prettyPrint="true" library="Gson" unmarshalTypeName="com.redhat.CarResp" />
+            </unmarshal>
+        </route>
+        <route id="brms">
+            <from uri="direct:brmsRoute" />
+            <setProperty propertyName="BookingResp">
+                <simple>${body}</simple>
+            </setProperty>
+            <process ref="brmsReqProc" />
+            <marshal>
+                <json prettyPrint="true" library="Gson" />
+            </marshal>
+            <setHeader headerName="Content-Type">
+                <constant>application/json</constant>
+            </setHeader>
+            <setHeader headerName="Accept">
+                <constant>application/json</constant>
+            </setHeader>
+            <to uri="http4://{{BRMSURL}}?exchangePattern=InOut&amp;bridgeEndpoint=true&amp;authUsername={{BRMSUser}}&amp;authPassword={{BRMSPassword}}" />
+            <process ref="brmsRespProc" />
+            <marshal>
+                <json prettyPrint="true" library="Gson" />
+            </marshal>
+        </route>
+    </camelContext>
+</beans>

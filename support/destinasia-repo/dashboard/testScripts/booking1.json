@@ -1,0 +1,8 @@
+{
+	{
+	"flightReq":{"flightFrom":"SIN","flightTo":"PEK","flightDate":"2017-02-28","flightPassengers":4,"flightNo":"SG66"},
+	"hotelReq":{"hotelArrivalDate":"2017-02-28","hotelNights":17,"hotelCity":"PEK","hotelId":"Marriott Beijing"},
+	"carReq":{"carCity":"PEK","carRentalCo":"Avis","carType":"Econ","carStartDate":"2017-02-28","carDays":17}
+	}
+}
+

@@ -1,0 +1,23 @@
+{"BookingRequest":{
+	"FlightReq":{
+		"flightFrom": "EZE",
+		"flightTo": "GRU",
+		"flightNo": 123,
+		"flightDate": "01/01/2016",
+		"flightPassengers": 2
+	},
+	"HotelReq":{
+		"hotelId": 123,
+		"hotelArrivalDate": "01/01/2016",
+		"hotelNights": 3,
+		"hotelCity": "EZE"
+	},
+	"CarReq":{
+		"carCity": "EZE",
+		"carRentalCo": 123,
+		"carStartDate": "01/01/2016",
+		"carType": "abc",
+		"carDays": 3
+	}
+}
+}

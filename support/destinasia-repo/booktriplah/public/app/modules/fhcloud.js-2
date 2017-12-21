@@ -1,0 +1,26 @@
+/*  
+ *  Author: Colum Bennett <colum.bennett@feedhenry.com>
+ *  Re-useable Angular service module using FeedHenry Hybrid API "$fh.cloud" call.
+ *  See developers docs, http://docs.feedhenry.com/
+ */
+angular.module('fhcloud', ['ngResource']).service("fhcloud", function( $http) {
+
+  return function(data) {
+    
+
+ 
+  var url='http://fusetravelagency-wohshon-destinasia.apps.dev.openshift.opentlc.com/rest/book';
+
+
+//return $http.post(url,data);
+return $http.post("/book",data)
+    .then(function(response) {
+            // success
+        console.log("ok")
+    }, 
+    function(response) { // optional
+            // failed
+    });
+
+  };
+});
