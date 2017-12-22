@@ -153,7 +153,7 @@ if [ "$?" -ne "0" ]; then
 fi
 
 # need to wait a bit for new app to deploy.
-sleep 20 
+sleep 10 
 
 echo
 echo "Deploying private chain..."
@@ -180,7 +180,7 @@ fi
 echo
 echo "Deploying an S2I node.js customer loyalty application..."
 echo
-oc new-app --name=$OCP_APP https://gitlab.com/destinasia/destinasia-repo.git --context-dir=$OCP_APP 
+oc new-app --name=$OCP_APP https://github.com/eschabell/loyalty-points-repo.git --context-dir=$OCP_APP --image-stream=nodejs:6
 
 if [ "$?" -ne "0" ]; then
 	echo
