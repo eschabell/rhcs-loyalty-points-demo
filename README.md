@@ -25,7 +25,10 @@ Step 1: Install Customer Loyalty Points project on OpenShift
    $ ./init.sh 192.168.99.100  # example for OCP.
 ```
 
-Project and application installed. Access the loyalty points Node.js application at address provided by installation
+Before proceeding, please read [customer loyalty points demo documentation](docs/customer_loyalty_points_demo_docs.pdf)
+for step by step how to run through this demo.
+
+Once application installed, access the loyalty points Node.js application at address provided by installation
 script, such as:
 
   - http://dapp-ethe-demo.192.168.99.100.nip.io    
