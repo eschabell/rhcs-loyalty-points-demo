@@ -1,4 +1,5 @@
-FROM node:boron
+#FROM node:boron
+FROM rhscl/nodejs-6-rhel7
 
 # Create app directory
 RUN mkdir -p /usr/src/app
