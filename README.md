@@ -1,3 +1,6 @@
+Update: June 2018 moved to [Gitlab](https://gitlab.com/eschabell/rhcs-loyalty-points-demo).
+
+
 Customer Travel Loyalty Points Demo
 ===================================
 Experience the wonders of Blockchain and crypto ledger open technology based on Ethereum project as used to ensure the transfer of 
